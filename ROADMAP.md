@@ -5,13 +5,16 @@ This roadmap describes outcomes, not date promises.
 ## M0 — Public foundation
 
 - complete ownership, license, secret-history, and dependency review;
-- establish repository rules, security reporting, governance, and CI;
-- approve the initial source-admission manifest;
+- establish repository rules, security reporting, governance, and CI (CI added
+  with the first admitted source slice);
+- approve the initial source-admission manifest (initial `contracts` and
+  `authorization` slice approved and implemented on a review branch);
 - add Apache-2.0 only after legal/ownership review.
 
 ## M1 — Control-plane kernel
 
-- tenant/project principals and scopes;
+- tenant/project principals and exact-scope authorization (first slice
+  implemented with negative cross-tenant tests);
 - immutable plans and separate approval;
 - idempotent apply and append-only audit;
 - minimal PostgreSQL schema with forced RLS;

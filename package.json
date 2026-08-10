@@ -1,0 +1,17 @@
+{
+  "name": "policyapply",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Policy-first control plane for safe, tenant-aware operations.",
+  "engines": { "node": ">=22.0.0" },
+  "packageManager": "pnpm@11.16.0",
+  "scripts": {
+    "check": "pnpm typecheck && pnpm test",
+    "test": "pnpm -r --if-present test",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}
