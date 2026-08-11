@@ -17,5 +17,6 @@ COPY apps/api apps/api
 COPY packages packages
 
 USER node
+WORKDIR /workspace/apps/api
 EXPOSE 3000
-CMD ["pnpm", "--filter", "@policyapply/api", "start:quickstart"]
+CMD ["node", "--import", "tsx", "src/quickstart-server.ts"]
