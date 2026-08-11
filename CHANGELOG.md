@@ -31,6 +31,11 @@ The project intends to follow Keep a Changelog and Semantic Versioning after the
   independent decisions, idempotent apply, and payload-free audit reads.
 - Shared application control-plane orchestration with exact project scopes,
   injected authentication, bounded request validation, and secret-safe errors.
+- Disposable local Docker Compose quickstart with generated file-backed
+  credentials, PostgreSQL forced RLS, separate synthetic principals, a fake
+  executor, health checks, cleanup, and lifecycle smoke verification.
+- Durable draft/decision plan persistence and persisted idempotency lookup for
+  safe replay after process restart.
 
 ### Changed
 

@@ -4,6 +4,7 @@ export {
   computePlanDigest,
   createChangePlan,
   decideChangePlan,
+  freezeChangePlan,
   type CreateChangePlanInput,
   type DecideChangePlanInput,
 } from "./change-plan.js";

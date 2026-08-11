@@ -8,6 +8,23 @@
   "servers": [{ "url": "http://127.0.0.1:3000", "description": "Local reference only" }],
   "security": [{ "bearerAuth": [] }],
   "paths": {
+    "/health/live": {
+      "get": {
+        "operationId": "getLiveness",
+        "security": [],
+        "responses": { "200": { "description": "Process is alive", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Health" } } } } }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "getReadiness",
+        "security": [],
+        "responses": {
+          "200": { "description": "Dependencies are ready", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Health" } } } },
+          "503": { "description": "A dependency is unavailable", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Health" } } } }
+        }
+      }
+    },
     "/openapi.json": {
       "get": {
         "operationId": "getOpenApi",
@@ -147,6 +164,10 @@
       "IdempotencyKey": { "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string", "pattern": "^[A-Za-z0-9._:-]{8,128}$" } }
     },
     "schemas": {
+      "Health": {
+        "type": "object", "required": ["status"], "additionalProperties": false,
+        "properties": { "status": { "enum": ["ok", "unavailable"] } }
+      },
       "OpaqueId": { "type": "string", "pattern": "^[A-Za-z0-9._:-]{1,128}$" },
       "Digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
       "Actor": {

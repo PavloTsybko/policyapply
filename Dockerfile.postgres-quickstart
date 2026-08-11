@@ -1,0 +1,6 @@
+FROM postgres:18-alpine
+
+COPY quickstart/postgres/entrypoint.sh /usr/local/bin/policyapply-postgres-entrypoint
+
+ENTRYPOINT ["policyapply-postgres-entrypoint"]
+CMD ["postgres"]

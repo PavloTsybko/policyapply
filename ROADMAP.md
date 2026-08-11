@@ -28,7 +28,11 @@ This roadmap describes outcomes, not date promises.
   independent decisions, idempotent apply, and payload-free audit reads are
   implemented on a stacked review branch; production composition and listener
   remain out of scope);
-- disposable Docker quickstart with synthetic data.
+- disposable Docker quickstart with synthetic data (local-only Compose,
+  generated file-backed credentials, non-superuser RLS runtime, fake executor,
+  health checks, cleanup, and lifecycle smoke verification are implemented on
+  a stacked review branch; image publication and deployment remain out of
+  scope).
 
 ## M2 — Integration SDK
 

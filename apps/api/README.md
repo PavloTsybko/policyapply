@@ -13,7 +13,8 @@ The API is intentionally a thin transport:
 - request bodies and credentials are not logged by the reference app;
 - action parameters are never returned by apply or audit operations.
 
-There is no production composition, network listener, database credential,
-provider adapter, SDK, MCP server, package publication, or deployment in this
-slice. Tests use synthetic principals, an in-memory plan store, and a fake
-executor that performs no external operation.
+`quickstart-server.ts` is a fixed local demonstration composition with generated
+file-backed credentials, one synthetic tenant/project, PostgreSQL reference
+persistence, and a fake executor. It is started only by the disposable Docker
+quickstart and is not a production listener. There is no provider adapter, SDK,
+MCP server, package/image publication, deployment, or release in this slice.

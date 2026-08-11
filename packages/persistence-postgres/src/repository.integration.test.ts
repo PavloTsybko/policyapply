@@ -160,6 +160,35 @@ integration("PostgresApplyRepository", () => {
     }
   });
 
+  it("persists an exact draft-to-approval transition through the plan port", async () => {
+    const repository = new PostgresApplyRepository(runtime, tenantA);
+    const draft = createChangePlan({
+      tenantId: tenantA,
+      projectId: projectA,
+      createdBy: { principalId: "principal_plan_port_creator", kind: "agent" },
+      createdAt: "2026-08-11T12:00:00.000Z",
+      actions: [{
+        id: "action_plan_port_01",
+        type: "example.setting.update",
+        schemaVersion: "1",
+        targetRef: "resource_plan_port_01",
+        parameters: { enabled: true },
+      }],
+    });
+    await repository.create(draft);
+    expect(await repository.get(tenantA, projectA, draft.id)).toEqual(draft);
+    const approved = decideChangePlan(draft, {
+      decidedBy: { principalId: "principal_plan_port_approver", kind: "user" },
+      decidedAt: "2026-08-11T12:01:00.000Z",
+      decision: "approved",
+      expectedRevision: draft.revision,
+      expectedDigest: draft.digest,
+    });
+    await repository.replaceExact(draft, approved);
+    expect(await repository.get(tenantA, projectA, draft.id)).toEqual(approved);
+    await expectCode(repository.replaceExact(draft, approved), "plan_conflict");
+  });
+
   it("persists atomically and replays without a second execution", async () => {
     const plan = approvedPlan(tenantA, projectA);
     const repository = new PostgresApplyRepository(runtime, tenantA);

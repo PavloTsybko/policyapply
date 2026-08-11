@@ -1,0 +1,83 @@
+name: policyapply-quickstart
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres-quickstart
+    environment:
+      POSTGRES_DB: policyapply_quickstart
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POLICYAPPLY_RUNTIME_DB_PASSWORD_FILE: /run/secrets/runtime_db_password
+    secrets:
+      - postgres_password
+      - runtime_db_password
+    volumes:
+      - policyapply_quickstart_data:/var/lib/postgresql
+      - ./packages/persistence-postgres/migrations/0001_core.sql:/docker-entrypoint-initdb.d/001_core.sql:ro
+      - ./quickstart/postgres/002_bootstrap.sh:/docker-entrypoint-initdb.d/002_bootstrap.sh:ro
+      - ./quickstart/postgres/002_bootstrap.sql:/opt/policyapply/002_bootstrap.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d policyapply_quickstart"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.quickstart
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGDATABASE: policyapply_quickstart
+      PGUSER: policyapply_runtime
+      PGPASSWORD_FILE: /run/policyapply/runtime_db_password
+      POLICYAPPLY_CREATOR_TOKEN_FILE: /run/policyapply/creator_token
+      POLICYAPPLY_APPROVER_TOKEN_FILE: /run/policyapply/approver_token
+      POLICYAPPLY_TENANT_ID: tenant_quickstart
+      POLICYAPPLY_PROJECT_ID: project_quickstart
+    secrets:
+      - runtime_db_password
+      - creator_token
+      - approver_token
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3000:3000"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run/policyapply:mode=0700
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: "no"
+
+volumes:
+  policyapply_quickstart_data:
+
+secrets:
+  postgres_password:
+    file: ./.quickstart/secrets/postgres_password
+  runtime_db_password:
+    file: ./.quickstart/secrets/runtime_db_password
+  creator_token:
+    file: ./.quickstart/secrets/creator_token
+  approver_token:
+    file: ./.quickstart/secrets/approver_token

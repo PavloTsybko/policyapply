@@ -7,6 +7,7 @@ It provides:
 
 - tenant-bound transactions using `SET LOCAL policyapply.tenant_id`;
 - forced Row-Level Security on every tenant-owned table;
+- exact draft creation and draft-to-decision compare-and-swap transitions;
 - SHA-256 digests instead of raw idempotency keys;
 - atomic completion of an apply attempt, its plan state, and audit receipt;
 - database-enforced append-only audit rows.
