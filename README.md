@@ -4,7 +4,9 @@
 
 ## Status
 
-PolicyApply is in **pre-release repository setup**. The public architecture and contribution rules are being prepared before any reusable source is admitted.
+PolicyApply is in **pre-release development**. The first admitted source slice
+defines provider-neutral identity contracts and deny-by-default project
+authorization. The broader plan/approve/apply system is not implemented yet.
 
 There are currently:
 
@@ -12,7 +14,8 @@ There are currently:
 - no tagged releases;
 - no production deployment;
 - no claims of users, adoption, benchmarks, or security certification;
-- no source copied from a private product repository.
+- no source copied from a private product repository; admitted code is newly
+  authored or independently rewritten against approved public invariants.
 
 ## What PolicyApply will be
 
@@ -65,19 +68,25 @@ See [SECURITY.md](SECURITY.md). Do not report vulnerabilities in public issues.
 
 ## Development
 
-The implementation workspace is intentionally empty until the extraction, ownership, license, and security gates are complete.
-
-Planned baseline:
+Implemented baseline:
 
 - Node.js 22;
 - TypeScript in strict mode;
 - pnpm workspace;
-- Fastify and OpenAPI;
-- PostgreSQL 18;
 - Vitest;
-- Docker Compose for the disposable local environment.
 
-No installation command is documented as working yet. Clean-clone installation will be added only after it is implemented and verified in CI.
+Planned later in M1: Fastify/OpenAPI, PostgreSQL 18 with forced RLS, and a
+disposable Docker Compose environment.
+
+Requirements: Node.js 22+ and pnpm 11.16.0.
+
+```bash
+pnpm install --frozen-lockfile
+pnpm check
+```
+
+The packages are private and unpublished. Use the workspace commands above;
+there is no supported production deployment.
 
 ## OpenAI and MCP
 
