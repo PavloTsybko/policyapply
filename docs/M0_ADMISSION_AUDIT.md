@@ -1,6 +1,6 @@
 # M0 source-admission audit
 
-Status: **draft evidence for maintainer review**
+Status: **admitted evidence**
 
 Audit date: 2026-08-11
 
@@ -14,17 +14,17 @@ containers, releases, or deployments.
 
 ## Admission scope
 
-The proposed M1 admission is the ordered stack below. Each pull request is
-still a draft and must be reviewed and merged in order.
+The completed M1 admission used the ordered stack below. Each pull request was
+reviewed, retargeted to the current `main`, CI-verified, and merged in order.
 
-| Order | Pull request | Scope | Base | CI at audit time |
+| Order | Pull request | Scope | Base | Admission result |
 | --- | --- | --- | --- | --- |
-| 1 | #1 | tenant contracts and exact-scope authorization | `main` | passing |
-| 2 | #2 | immutable plan and independent approval | PR #1 branch | passing |
-| 3 | #3 | idempotent apply and append-only audit | PR #2 branch | passing |
-| 4 | #4 | PostgreSQL persistence and forced RLS | PR #3 branch | passing |
-| 5 | #5 | OpenAPI-first Fastify reference API | PR #4 branch | passing |
-| 6 | #6 | disposable synthetic Docker quickstart | PR #5 branch | passing |
+| 1 | #1 | tenant contracts and exact-scope authorization | `main` | merged |
+| 2 | #2 | immutable plan and independent approval | PR #1 branch | merged |
+| 3 | #3 | idempotent apply and append-only audit | PR #2 branch | merged |
+| 4 | #4 | PostgreSQL persistence and forced RLS | PR #3 branch | merged |
+| 5 | #5 | OpenAPI-first Fastify reference API | PR #4 branch | merged |
+| 6 | #6 | disposable synthetic Docker quickstart | PR #5 branch | merged |
 
 No real provider mutation, production persistence, deployment, package/image
 publication, MCP server, SDK, UI, or release is included in this admission.
@@ -99,26 +99,28 @@ The checked decisions above record the maintainer's explicit written
 attestation on 2026-08-11. They do not authorize an automated merge, package or
 image publication, deployment, or release.
 
-## Merge and rollback plan
+## Completed merge sequence and rollback policy
 
-After all maintainer decisions above are recorded:
+The approved stack was merged in order as merge commits:
 
-1. review PR #1 against `main`, mark it ready, and merge it;
-2. retarget/rebase PR #2 onto updated `main`, rerun CI, and merge it;
-3. repeat sequentially for PRs #3 through #6;
-4. rerun the full test, PostgreSQL integration, Docker smoke, and secret scan on
-   the combined `main` branch;
-5. retain the approved Apache-2.0 license and generate/review third-party
-   notices before distributing any package, image, or release.
+1. PR #1: `0d2eaf9`;
+2. PR #2: `8ed18e0`;
+3. PR #3: `4d63bdb`;
+4. PR #4: `7cb19b6`;
+5. PR #5: `4495e8f`;
+6. PR #6: `0fdc62c`;
+7. M0 audit and Apache-2.0 PR #7: `c82eef8`.
 
-If any slice fails review, stop at that slice. Do not merge later stacked pull
-requests. Because no release or deployment exists, rollback is performed by
-closing or revising the affected pull request rather than mutating production
-state.
+Each stacked branch was retargeted to updated `main` and passed CI before its
+merge. The final `main` push passed unit tests, PostgreSQL integration, Docker
+smoke, and disposable-volume cleanup.
+
+Because no release or deployment exists, any future rollback must use a
+reviewed Git revert and rerun the complete CI suite. Production rollback is not
+applicable.
 
 ## Admission result
 
-Technical M1 evidence and the recorded ownership/license decisions are **ready
-for final review**. M0 delivery remains pending the merge sequence above. A
-third-party notices artifact remains a gate for package, image, or release
-distribution. No deployment or release is authorized by this document.
+M0 and M1 source admission are **complete on `main`**. A third-party notices
+artifact remains a gate for package, image, or release distribution. No
+deployment or release is authorized by this document.

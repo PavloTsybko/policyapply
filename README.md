@@ -4,16 +4,14 @@
 
 ## Status
 
-PolicyApply is in **pre-release development**. The first admitted source slice
-defines provider-neutral identity contracts and deny-by-default project
-authorization. A second review slice adds immutable draft plans and independent
-approval/rejection bound to an exact revision and digest. A third review slice
-defines the provider-neutral idempotent apply protocol and payload-free
-append-only audit receipts. A fourth review slice adds minimal PostgreSQL
-reference persistence with forced RLS and disposable integration tests. A
-fifth review slice adds an OpenAPI-first Fastify reference API over the shared
-application policies. A sixth review slice adds a disposable, synthetic Docker
-quickstart. Apply is not connected to any real provider.
+PolicyApply is in **pre-release development**. The M0 public foundation and M1
+control-plane kernel are admitted to `main`: provider-neutral identity,
+deny-by-default authorization, immutable plans, independent approval,
+idempotent apply, append-only audit, forced-RLS PostgreSQL persistence, an
+OpenAPI-first Fastify reference API, and a disposable synthetic Docker
+quickstart. The first M2 review slice adds closed versioned integration
+manifests and exact-version adapter selection. Apply is not connected to any
+real provider.
 
 There are currently:
 
@@ -94,9 +92,11 @@ Implemented baseline:
 - a local-only Docker Compose quickstart with generated file-backed secrets,
   PostgreSQL forced RLS, separate synthetic principals, a fake executor,
   health checks, and an executable lifecycle smoke test.
+- a closed v1 integration manifest parser and exact-version, deny-by-default
+  adapter registry that performs no adapter execution.
 
-M1 kernel slices are implemented on stacked review branches. They remain
-unmerged, pre-release, and subject to review.
+M0 and M1 are merged into `main`. M2 remains under review. The project is still
+pre-release and no package, image, deployment, or supported release exists.
 
 The point-in-time technical evidence and maintainer decisions required before
 source admission are recorded in

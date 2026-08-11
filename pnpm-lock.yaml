@@ -80,6 +80,8 @@ importers:
         specifier: 26.0.0
         version: 26.0.0
 
+  packages/integration-sdk: {}
+
   packages/persistence-postgres:
     dependencies:
       '@policyapply/application':

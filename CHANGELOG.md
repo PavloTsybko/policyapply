@@ -41,6 +41,9 @@ The project intends to follow Keep a Changelog and Semantic Versioning after the
   and sequential merge/rollback gates.
 - Apache-2.0 repository licensing following explicit maintainer ownership and
   source-admission approval.
+- Closed v1 integration manifests with strict runtime validation, immutable
+  parsed contracts, mandatory mutation safety declarations, and an
+  exact-version deny-by-default adapter registry.
 
 ### Changed
 
