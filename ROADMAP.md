@@ -15,7 +15,8 @@ This roadmap describes outcomes, not date promises.
 
 - tenant/project principals and exact-scope authorization (first slice
   implemented with negative cross-tenant tests);
-- immutable plans and separate approval;
+- immutable plans and separate approval (implemented on a stacked review branch
+  with revision/digest binding and self-approval denial);
 - idempotent apply and append-only audit;
 - minimal PostgreSQL schema with forced RLS;
 - Fastify/OpenAPI reference API;

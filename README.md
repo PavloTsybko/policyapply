@@ -6,7 +6,9 @@
 
 PolicyApply is in **pre-release development**. The first admitted source slice
 defines provider-neutral identity contracts and deny-by-default project
-authorization. The broader plan/approve/apply system is not implemented yet.
+authorization. A second review slice adds immutable draft plans and independent
+approval/rejection bound to an exact revision and digest. Apply is not
+implemented yet.
 
 There are currently:
 
@@ -74,6 +76,8 @@ Implemented baseline:
 - TypeScript in strict mode;
 - pnpm workspace;
 - Vitest;
+- canonical JSON and SHA-256 plan integrity metadata;
+- immutable plan creation with independent approval/rejection.
 
 Planned later in M1: Fastify/OpenAPI, PostgreSQL 18 with forced RLS, and a
 disposable Docker Compose environment.
