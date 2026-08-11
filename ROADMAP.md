@@ -5,9 +5,9 @@ This roadmap describes outcomes, not date promises.
 ## M0 — Public foundation
 
 - complete ownership, license, secret-history, and dependency review
-  (technical evidence and explicit maintainer gates are recorded in
-  `docs/M0_ADMISSION_AUDIT.md`; secret-history scan passed, while ownership,
-  MPL-2.0 review, third-party notices, and license approval remain pending);
+  (technical evidence and the maintainer's ownership, dependency, and
+  Apache-2.0 decisions are recorded in `docs/M0_ADMISSION_AUDIT.md`;
+  third-party notices remain a distribution gate);
 - establish repository rules, security reporting, governance, and CI (CI added
   with the first admitted source slice);
 - approve the initial source-admission manifest (initial `contracts` and

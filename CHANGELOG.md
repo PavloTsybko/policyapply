@@ -39,6 +39,8 @@ The project intends to follow Keep a Changelog and Semantic Versioning after the
 - Draft M0 source-admission evidence covering the stacked M1 scope, reachable
   secret-history scan, dependency-license inventory, maintainer attestations,
   and sequential merge/rollback gates.
+- Apache-2.0 repository licensing following explicit maintainer ownership and
+  source-admission approval.
 
 ### Changed
 

@@ -83,17 +83,21 @@ legal notice. A clean CI-generated third-party notice remains a release gate.
 The following items must be completed by the repository maintainer. They may
 not be inferred or approved by an automated agent.
 
-- [ ] I confirm that I own the admitted source or have authority to publish it.
-- [ ] I confirm that the admitted source was not copied from a private employer,
+- [x] I confirm that I own the admitted source or have authority to publish it.
+- [x] I confirm that the admitted source was not copied from a private employer,
       client, contractor, or otherwise restricted repository.
-- [ ] I reviewed the two Git email identities and confirm they represent the
+- [x] I reviewed the two Git email identities and confirm they represent the
       same authorized contributor.
-- [ ] I reviewed dependency licenses, including the MPL-2.0 transitive tooling
+- [x] I reviewed dependency licenses, including the MPL-2.0 transitive tooling
       dependency and any distribution obligations.
-- [ ] I approve Apache-2.0 for the repository source.
+- [x] I approve Apache-2.0 for the repository source.
 - [ ] I approve generating and reviewing a third-party notices artifact before
       any package, image, or release publication.
-- [ ] I approve converting and merging PRs #1 through #6 in order.
+- [x] I approve converting and merging PRs #1 through #6 in order.
+
+The checked decisions above record the maintainer's explicit written
+attestation on 2026-08-11. They do not authorize an automated merge, package or
+image publication, deployment, or release.
 
 ## Merge and rollback plan
 
@@ -104,7 +108,8 @@ After all maintainer decisions above are recorded:
 3. repeat sequentially for PRs #3 through #6;
 4. rerun the full test, PostgreSQL integration, Docker smoke, and secret scan on
    the combined `main` branch;
-5. add Apache-2.0 only in a separately reviewed change after explicit approval.
+5. retain the approved Apache-2.0 license and generate/review third-party
+   notices before distributing any package, image, or release.
 
 If any slice fails review, stop at that slice. Do not merge later stacked pull
 requests. Because no release or deployment exists, rollback is performed by
@@ -113,6 +118,7 @@ state.
 
 ## Admission result
 
-Technical M1 evidence is **ready for maintainer review**. M0 remains blocked on
-the unchecked maintainer decisions above. No open-source license or release is
-granted by this document.
+Technical M1 evidence and the recorded ownership/license decisions are **ready
+for final review**. M0 delivery remains pending the merge sequence above. A
+third-party notices artifact remains a gate for package, image, or release
+distribution. No deployment or release is authorized by this document.

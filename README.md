@@ -130,4 +130,6 @@ The repository is public for transparent preparation. Before submitting code, re
 
 ## License
 
-No OSS license has been granted yet. Apache-2.0 is the current recommendation, pending ownership, dependency-license, and legal review. Until a license is added, the repository is source-visible but not yet an open-source release.
+PolicyApply is licensed under the [Apache License 2.0](LICENSE). The project is
+still pre-release: this license does not imply production readiness, a
+published package or image, or a supported release.
