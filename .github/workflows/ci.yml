@@ -12,6 +12,22 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: policyapply_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: synthetic_ci_only_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d policyapply_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      POLICYAPPLY_TEST_DATABASE_URL: postgresql://postgres:synthetic_ci_only_password@127.0.0.1:5432/policyapply_test
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
