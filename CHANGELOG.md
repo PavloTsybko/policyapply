@@ -27,6 +27,10 @@ The project intends to follow Keep a Changelog and Semantic Versioning after the
 - Forced Row-Level Security and negative cross-tenant integration coverage in a
   database whose name must end in `_test`.
 - Migration and destructive-rollback guidance without production automation.
+- OpenAPI 3.1 contract plus a thin Fastify reference API for plan creation/read,
+  independent decisions, idempotent apply, and payload-free audit reads.
+- Shared application control-plane orchestration with exact project scopes,
+  injected authentication, bounded request validation, and secret-safe errors.
 
 ### Changed
 

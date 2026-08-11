@@ -24,7 +24,10 @@ This roadmap describes outcomes, not date promises.
   apply/audit finalization, migration notes, and disposable integration tests
   implemented on a stacked review branch; production role provisioning,
   operations, and deployment remain out of scope);
-- Fastify/OpenAPI reference API;
+- Fastify/OpenAPI reference API (contract-first routes for plan creation/read,
+  independent decisions, idempotent apply, and payload-free audit reads are
+  implemented on a stacked review branch; production composition and listener
+  remain out of scope);
 - disposable Docker quickstart with synthetic data.
 
 ## M2 — Integration SDK
