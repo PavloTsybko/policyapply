@@ -98,6 +98,11 @@ Implemented baseline:
 M1 kernel slices are implemented on stacked review branches. They remain
 unmerged, pre-release, and subject to review.
 
+The point-in-time technical evidence and maintainer decisions required before
+source admission are recorded in
+[`docs/M0_ADMISSION_AUDIT.md`](docs/M0_ADMISSION_AUDIT.md). That audit does not
+grant a license or authorize publication.
+
 Requirements: Node.js 22+ and pnpm 11.16.0.
 
 ```bash
@@ -125,4 +130,6 @@ The repository is public for transparent preparation. Before submitting code, re
 
 ## License
 
-No OSS license has been granted yet. Apache-2.0 is the current recommendation, pending ownership, dependency-license, and legal review. Until a license is added, the repository is source-visible but not yet an open-source release.
+PolicyApply is licensed under the [Apache License 2.0](LICENSE). The project is
+still pre-release: this license does not imply production readiness, a
+published package or image, or a supported release.
