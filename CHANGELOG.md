@@ -36,6 +36,9 @@ The project intends to follow Keep a Changelog and Semantic Versioning after the
   executor, health checks, cleanup, and lifecycle smoke verification.
 - Durable draft/decision plan persistence and persisted idempotency lookup for
   safe replay after process restart.
+- Draft M0 source-admission evidence covering the stacked M1 scope, reachable
+  secret-history scan, dependency-license inventory, maintainer attestations,
+  and sequential merge/rollback gates.
 
 ### Changed
 

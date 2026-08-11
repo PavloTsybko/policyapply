@@ -98,6 +98,11 @@ Implemented baseline:
 M1 kernel slices are implemented on stacked review branches. They remain
 unmerged, pre-release, and subject to review.
 
+The point-in-time technical evidence and maintainer decisions required before
+source admission are recorded in
+[`docs/M0_ADMISSION_AUDIT.md`](docs/M0_ADMISSION_AUDIT.md). That audit does not
+grant a license or authorize publication.
+
 Requirements: Node.js 22+ and pnpm 11.16.0.
 
 ```bash
