@@ -1,5 +1,5 @@
 {
-  "name": "@policyapply/application",
+  "name": "@policyapply/api",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,9 +9,10 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@policyapply/authorization": "workspace:*",
+    "@policyapply/application": "workspace:*",
     "@policyapply/contracts": "workspace:*",
-    "@policyapply/domain": "workspace:*"
+    "@policyapply/domain": "workspace:*",
+    "fastify": "5.6.2"
   },
   "devDependencies": { "@types/node": "26.0.0" }
 }
