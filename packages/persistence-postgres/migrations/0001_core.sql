@@ -30,7 +30,7 @@ CREATE TABLE policyapply.change_plans (
   id text NOT NULL,
   revision integer NOT NULL CHECK (revision > 0),
   digest text NOT NULL CHECK (digest ~ '^[a-f0-9]{64}$'),
-  status text NOT NULL CHECK (status IN ('approved', 'applied')),
+  status text NOT NULL CHECK (status IN ('draft', 'approved', 'rejected', 'applied')),
   document jsonb NOT NULL,
   created_at timestamptz NOT NULL,
   updated_at timestamptz NOT NULL DEFAULT transaction_timestamp(),

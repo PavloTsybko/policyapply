@@ -63,6 +63,7 @@ export interface ApiAuthenticator {
 export interface BuildApiOptions {
   readonly controlPlane: PolicyApplyControlPlane;
   readonly authenticator: ApiAuthenticator;
+  readonly readiness?: () => Promise<boolean>;
 }
 
 interface ProjectParams {
@@ -195,6 +196,18 @@ export const buildApi = (options: BuildApiOptions): FastifyInstance => {
     ajv: { customOptions: { removeAdditional: false } },
   });
   app.setErrorHandler(mapError);
+
+  app.get("/health/live", async () => ({ status: "ok" }));
+  app.get("/health/ready", async (_request, reply) => {
+    try {
+      const ready = options.readiness === undefined || await options.readiness();
+      return ready
+        ? { status: "ok" }
+        : reply.status(503).send({ status: "unavailable" });
+    } catch {
+      return reply.status(503).send({ status: "unavailable" });
+    }
+  });
 
   app.get("/openapi.json", async (_request, reply) => reply.send(openapi));
 

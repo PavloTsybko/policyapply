@@ -52,7 +52,10 @@ const completed: ApplyOutcome = {
 
 const apps: ReturnType<typeof buildApi>[] = [];
 
-const fixture = (outcome: () => Promise<ApplyOutcome> = async () => completed) => {
+const fixture = (
+  outcome: () => Promise<ApplyOutcome> = async () => completed,
+  readiness?: () => Promise<boolean>,
+) => {
   const applyRepository = new InMemoryApplyRepository();
   let operation = 0;
   let audit = 0;
@@ -74,6 +77,7 @@ const fixture = (outcome: () => Promise<ApplyOutcome> = async () => completed) =
   );
   const app = buildApi({
     controlPlane,
+    ...(readiness === undefined ? {} : { readiness }),
     authenticator: {
       authenticate: async (token) => tokens.get(token) ?? null,
     },
@@ -97,8 +101,19 @@ describe("PolicyApply reference API", () => {
       Object.values(path).map((operation: any) => operation.operationId),
     )).toEqual(expect.arrayContaining([
       "getOpenApi", "createPlan", "getPlan", "decidePlan", "applyPlan", "listAudit",
+      "getLiveness", "getReadiness",
     ]));
     expect(document.paths[planUrl.replace(`/v1/tenants/${tenantId}/projects/${projectId}`, "/v1/tenants/{tenantId}/projects/{projectId}")].post["x-required-scope"]).toBe("plans:create");
+  });
+
+  it("reports bounded liveness and readiness without authentication", async () => {
+    const { app } = fixture();
+    expect((await app.inject({ method: "GET", url: "/health/live" })).json()).toEqual({ status: "ok" });
+    expect((await app.inject({ method: "GET", url: "/health/ready" })).json()).toEqual({ status: "ok" });
+    const { app: unavailable } = fixture(async () => completed, async () => false);
+    const response = await unavailable.inject({ method: "GET", url: "/health/ready" });
+    expect(response.statusCode).toBe(503);
+    expect(response.json()).toEqual({ status: "unavailable" });
   });
 
   it("rejects missing authentication and never accepts a principal in the body", async () => {

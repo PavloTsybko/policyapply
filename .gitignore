@@ -13,3 +13,4 @@ coverage/
 *.pfx
 deploy/local/secrets/
 tmp/
+.quickstart/

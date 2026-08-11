@@ -10,11 +10,14 @@ import type {
   ApplyRepository,
   ClaimApplyInput,
   ClaimApplyResult,
+  PlanRepository,
 } from "@policyapply/application";
 import {
   ApplyProtocolError,
   assertApprovedPlan,
   canonicalJson,
+  computePlanDigest,
+  freezeChangePlan,
 } from "@policyapply/domain";
 import type { PoolClient, QueryResultRow } from "pg";
 
@@ -150,12 +153,102 @@ const receiptFrom = (row: ReceiptRow): ApplyReceipt =>
  * Tenant-bound reference adapter. The tenant is trusted composition context,
  * never a value selected from an incoming request.
  */
-export class PostgresApplyRepository implements ApplyRepository {
+export class PostgresApplyRepository implements ApplyRepository, PlanRepository {
   constructor(
     private readonly pool: SqlPool,
     private readonly tenantId: string,
   ) {
     if (!safeId(tenantId)) throw new ApplyProtocolError("invalid_input");
+  }
+
+  async create(plan: ChangePlan): Promise<void> {
+    this.assertTenant(plan.tenantId);
+    if (
+      plan.status !== "draft" ||
+      plan.approval !== undefined ||
+      computePlanDigest(plan) !== plan.digest
+    ) {
+      throw new ApplyProtocolError("content_tampered");
+    }
+    try {
+      await this.transaction(async (client) => {
+        await client.query(
+          `INSERT INTO policyapply.change_plans
+            (tenant_id, project_id, id, revision, digest, status, document, created_at)
+           VALUES ($1, $2, $3, $4, $5, 'draft', $6::jsonb, $7)`,
+          [
+            plan.tenantId,
+            plan.projectId,
+            plan.id,
+            plan.revision,
+            plan.digest,
+            JSON.stringify(plan),
+            plan.createdAt,
+          ],
+        );
+      });
+    } catch (error) {
+      if ((error as { code?: string }).code === "23505") {
+        throw new ApplyProtocolError("plan_conflict");
+      }
+      throw error;
+    }
+  }
+
+  async get(
+    tenantId: string,
+    projectId: string,
+    planId: string,
+  ): Promise<ChangePlan | null> {
+    this.assertTenant(tenantId);
+    return this.transaction(async (client) => {
+      const result = await client.query<{ document: ChangePlan }>(
+        `SELECT document FROM policyapply.change_plans
+         WHERE tenant_id = $1 AND project_id = $2 AND id = $3`,
+        [tenantId, projectId, planId],
+      );
+      const document = result.rows[0]?.document;
+      return document === undefined ? null : freezeChangePlan(document);
+    });
+  }
+
+  async replaceExact(expected: ChangePlan, replacement: ChangePlan): Promise<void> {
+    this.assertTenant(expected.tenantId);
+    if (
+      replacement.tenantId !== expected.tenantId ||
+      replacement.projectId !== expected.projectId ||
+      replacement.id !== expected.id ||
+      replacement.revision !== expected.revision ||
+      replacement.digest !== expected.digest ||
+      !(
+        (expected.status === "draft" &&
+          (replacement.status === "approved" || replacement.status === "rejected")) ||
+        (expected.status === "approved" && replacement.status === "applied")
+      )
+    ) {
+      throw new ApplyProtocolError("plan_conflict");
+    }
+    await this.transaction(async (client) => {
+      const result = await client.query(
+        `UPDATE policyapply.change_plans
+         SET status = $7, document = $8::jsonb, updated_at = transaction_timestamp()
+         WHERE tenant_id = $1 AND project_id = $2 AND id = $3
+           AND revision = $4 AND digest = $5 AND status = $6
+           AND document = $9::jsonb`,
+        [
+          expected.tenantId,
+          expected.projectId,
+          expected.id,
+          expected.revision,
+          expected.digest,
+          expected.status,
+          replacement.status,
+          JSON.stringify(replacement),
+          JSON.stringify(expected),
+        ],
+      );
+      if (result.rowCount !== 1) throw new ApplyProtocolError("plan_conflict");
+    });
   }
 
   async storeApprovedPlan(plan: ChangePlan): Promise<void> {
@@ -194,9 +287,53 @@ export class PostgresApplyRepository implements ApplyRepository {
     });
   }
 
+  async findByIdempotencyKey(command: ClaimApplyInput["command"]): Promise<ApplyAttempt | null> {
+    this.assertTenant(command.tenantId);
+    return this.transaction(async (client) => {
+      const result = await client.query<AttemptRow>(
+        `SELECT * FROM policyapply.apply_attempts
+         WHERE tenant_id = $1 AND project_id = $2 AND idempotency_digest = $3`,
+        [this.tenantId, command.projectId, digestKey(command.idempotencyKey)],
+      );
+      const row = result.rows[0];
+      return row === undefined ? null : attemptFrom(row);
+    });
+  }
+
   async claim(input: ClaimApplyInput): Promise<ClaimApplyResult> {
     this.assertTenant(input.command.tenantId);
     return this.transaction(async (client) => {
+      const prior = await client.query<AttemptRow>(
+        `SELECT * FROM policyapply.apply_attempts
+         WHERE tenant_id = $1 AND project_id = $2 AND idempotency_digest = $3
+         FOR UPDATE`,
+        [
+          this.tenantId,
+          input.command.projectId,
+          digestKey(input.command.idempotencyKey),
+        ],
+      );
+      const priorRow = prior.rows[0];
+      if (priorRow !== undefined) {
+        if (priorRow.fingerprint !== input.fingerprint) {
+          throw new ApplyProtocolError("idempotency_conflict");
+        }
+        return { kind: "existing", attempt: attemptFrom(priorRow) };
+      }
+      const approved = await client.query(
+        `SELECT 1 FROM policyapply.change_plans
+         WHERE tenant_id = $1 AND project_id = $2 AND id = $3
+           AND revision = $4 AND digest = $5 AND status = 'approved'
+         FOR SHARE`,
+        [
+          this.tenantId,
+          input.command.projectId,
+          input.command.planId,
+          input.command.planRevision,
+          input.command.planDigest,
+        ],
+      );
+      if (approved.rowCount !== 1) throw new ApplyProtocolError("invalid_state");
       let inserted;
       try {
         inserted = await client.query<AttemptRow>(

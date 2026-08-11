@@ -41,6 +41,15 @@ export class InMemoryApplyRepository implements ApplyRepository {
   readonly #receipts = new Map<string, ApplyReceipt>();
   readonly #auditById = new Map<string, AuditReceipt>();
 
+  async findByIdempotencyKey(command: ClaimApplyInput["command"]): Promise<ApplyAttempt | null> {
+    const operationId = this.#operationByKey.get(
+      `${command.tenantId}\u0000${command.projectId}\u0000${command.idempotencyKey}`,
+    );
+    return operationId === undefined
+      ? null
+      : this.#attemptsByOperation.get(operationId) ?? null;
+  }
+
   async claim(input: ClaimApplyInput): Promise<ClaimApplyResult> {
     const key = keyFor(input);
     const existingOperation = this.#operationByKey.get(key);

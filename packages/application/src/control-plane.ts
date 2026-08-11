@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { authorizeProjectAction } from "@policyapply/authorization";
 import type {
   ApplyReceipt,
@@ -94,8 +93,6 @@ const actorFor = (principal: Principal) => ({
 });
 
 export class PolicyApplyControlPlane {
-  readonly #appliedKeyDigests = new Map<string, string>();
-
   constructor(
     private readonly plans: PlanRepository,
     private readonly applyService: ApplyService,
@@ -170,21 +167,7 @@ export class PolicyApplyControlPlane {
   }): Promise<ApplyReceipt> {
     this.authorize(input.principal, input.tenantId, input.projectId, "plans:apply");
     const current = await this.requiredPlan(input.tenantId, input.projectId, input.planId);
-    const key = planKey(input.tenantId, input.projectId, input.planId);
-    const suppliedKeyDigest = createHash("sha256")
-      .update(input.idempotencyKey)
-      .digest("hex");
-    const appliedKeyDigest = this.#appliedKeyDigests.get(key);
-    if (appliedKeyDigest !== undefined && appliedKeyDigest !== suppliedKeyDigest) {
-      throw new ApplyProtocolError("idempotency_conflict");
-    }
-    if (current.status === "applied" && appliedKeyDigest === undefined) {
-      throw new ApplyProtocolError("invalid_state");
-    }
-    const approvedView = current.status === "applied"
-      ? { ...current, status: "approved" as const }
-      : current;
-    const receipt = await this.applyService.apply(approvedView, {
+    const command = {
       tenantId: input.tenantId,
       projectId: input.projectId,
       planId: input.planId,
@@ -194,10 +177,20 @@ export class PolicyApplyControlPlane {
       idempotencyKey: input.idempotencyKey,
       correlationId: input.correlationId,
       requestedAt: this.clock.now(),
-      mode: "execute-v1",
-    });
-    this.#appliedKeyDigests.set(key, suppliedKeyDigest);
-    if (current.status !== "applied") {
+      mode: "execute-v1" as const,
+    };
+    if (
+      current.status === "applied" &&
+      (await this.applyRepository.findByIdempotencyKey(command)) === null
+    ) {
+      throw new ApplyProtocolError("idempotency_conflict");
+    }
+    const approvedView = current.status === "applied"
+      ? { ...current, status: "approved" as const }
+      : current;
+    const receipt = await this.applyService.apply(approvedView, command);
+    const persisted = await this.plans.get(input.tenantId, input.projectId, input.planId);
+    if (persisted?.status !== "applied") {
       await this.plans.replaceExact(current, markPlanApplied(current));
     }
     return receipt;
@@ -210,9 +203,9 @@ export class PolicyApplyControlPlane {
   }): Promise<readonly AuditReceipt[]> {
     this.authorize(input.principal, input.tenantId, input.projectId, "audit:read");
     const authorized = (await this.applyRepository.listAudit()).filter(
-        ({ tenantId, projectId }) =>
-          tenantId === input.tenantId && projectId === input.projectId,
-      );
+      ({ tenantId, projectId }) =>
+        tenantId === input.tenantId && projectId === input.projectId,
+    );
     return Object.freeze(authorized.slice(-100));
   }
 

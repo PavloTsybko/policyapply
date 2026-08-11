@@ -12,7 +12,8 @@ defines the provider-neutral idempotent apply protocol and payload-free
 append-only audit receipts. A fourth review slice adds minimal PostgreSQL
 reference persistence with forced RLS and disposable integration tests. A
 fifth review slice adds an OpenAPI-first Fastify reference API over the shared
-application policies. Apply is not connected to any real provider.
+application policies. A sixth review slice adds a disposable, synthetic Docker
+quickstart. Apply is not connected to any real provider.
 
 There are currently:
 
@@ -90,8 +91,12 @@ Implemented baseline:
 - an OpenAPI 3.1 contract and thin Fastify reference transport with injected
   authentication, exact-scope authorization, bounded validation, and
   secret-safe error responses.
+- a local-only Docker Compose quickstart with generated file-backed secrets,
+  PostgreSQL forced RLS, separate synthetic principals, a fake executor,
+  health checks, and an executable lifecycle smoke test.
 
-Planned later in M1: a disposable Docker Compose quickstart.
+M1 kernel slices are implemented on stacked review branches. They remain
+unmerged, pre-release, and subject to review.
 
 Requirements: Node.js 22+ and pnpm 11.16.0.
 
@@ -99,6 +104,9 @@ Requirements: Node.js 22+ and pnpm 11.16.0.
 pnpm install --frozen-lockfile
 pnpm check
 ```
+
+For the disposable local demonstration, see
+[`quickstart/README.md`](quickstart/README.md).
 
 The packages are private and unpublished. Use the workspace commands above;
 there is no supported production deployment.

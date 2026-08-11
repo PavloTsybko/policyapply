@@ -19,6 +19,7 @@ export type ClaimApplyResult =
   | { readonly kind: "existing"; readonly attempt: ApplyAttempt };
 
 export interface ApplyRepository {
+  findByIdempotencyKey(command: ApplyCommand): Promise<ApplyAttempt | null>;
   claim(input: ClaimApplyInput): Promise<ClaimApplyResult>;
   markExecuting(operationId: string): Promise<ApplyAttempt>;
   recordOutcome(operationId: string, outcome: ApplyOutcome): Promise<ApplyAttempt>;

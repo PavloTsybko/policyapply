@@ -1,0 +1,13 @@
+.git
+.github
+.quickstart
+.env
+.env.*
+node_modules
+coverage
+tmp
+*.log
+*.pem
+*.key
+*.p12
+*.pfx
