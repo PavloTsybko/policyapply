@@ -12,7 +12,7 @@ services:
       - postgres_password
       - runtime_db_password
     volumes:
-      - policyapply_quickstart_data:/var/lib/postgresql/data
+      - policyapply_quickstart_data:/var/lib/postgresql
       - ./packages/persistence-postgres/migrations/0001_core.sql:/docker-entrypoint-initdb.d/001_core.sql:ro
       - ./quickstart/postgres/002_bootstrap.sh:/docker-entrypoint-initdb.d/002_bootstrap.sh:ro
       - ./quickstart/postgres/002_bootstrap.sql:/opt/policyapply/002_bootstrap.sql:ro

@@ -44,5 +44,7 @@ jobs:
       - run: docker compose -f compose.quickstart.yml config --quiet
       - run: docker compose -f compose.quickstart.yml up --build --detach --wait --wait-timeout 180
       - run: sh quickstart/smoke.sh
+      - if: failure()
+        run: docker compose -f compose.quickstart.yml logs --no-color
       - if: always()
         run: docker compose -f compose.quickstart.yml down --volumes --remove-orphans

@@ -11,8 +11,10 @@ case "$POLICYAPPLY_RUNTIME_DB_PASSWORD" in
     ;;
 esac
 export POLICYAPPLY_RUNTIME_DB_PASSWORD
+PGOPTIONS='-c log_min_error_statement=panic'
+export PGOPTIONS
 psql --set ON_ERROR_STOP=1 \
   --username "$POSTGRES_USER" \
   --dbname "$POSTGRES_DB" \
   --file /opt/policyapply/002_bootstrap.sql
-unset POLICYAPPLY_RUNTIME_DB_PASSWORD
+unset POLICYAPPLY_RUNTIME_DB_PASSWORD PGOPTIONS
