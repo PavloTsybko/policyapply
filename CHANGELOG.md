@@ -13,6 +13,10 @@ The project intends to follow Keep a Changelog and Semantic Versioning after the
   and deny-by-default tenant/project authorization.
 - Strict TypeScript checks, Vitest coverage, and a minimal GitHub Actions CI
   workflow.
+- Immutable draft plans with canonical SHA-256 content digests and independent
+  approval/rejection bound to exact revision and digest.
+- Fail-closed canonical JSON validation for cycles, accessors, custom
+  prototypes, symbol keys, sparse arrays, and unsafe numeric values.
 
 ### Changed
 
