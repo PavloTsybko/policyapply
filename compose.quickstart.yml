@@ -2,7 +2,9 @@ name: policyapply-quickstart
 
 services:
   postgres:
-    image: postgres:18-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres-quickstart
     environment:
       POSTGRES_DB: policyapply_quickstart
       POSTGRES_USER: postgres
