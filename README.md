@@ -8,7 +8,9 @@ PolicyApply is in **pre-release development**. The first admitted source slice
 defines provider-neutral identity contracts and deny-by-default project
 authorization. A second review slice adds immutable draft plans and independent
 approval/rejection bound to an exact revision and digest. Apply is not
-implemented yet.
+connected to any real provider, persistence layer, or public API. A third
+review slice defines the provider-neutral idempotent apply protocol and
+payload-free append-only audit receipts using test-only in-memory ports.
 
 There are currently:
 
@@ -78,6 +80,9 @@ Implemented baseline:
 - Vitest;
 - canonical JSON and SHA-256 plan integrity metadata;
 - immutable plan creation with independent approval/rejection.
+- idempotent apply orchestration contracts with safe replay and uncertain-result
+  handling;
+- payload-free append-only audit receipts and a test-only in-memory repository.
 
 Planned later in M1: Fastify/OpenAPI, PostgreSQL 18 with forced RLS, and a
 disposable Docker Compose environment.
