@@ -140,13 +140,14 @@ describe("decideChangePlan", () => {
     expect(approved.status).toBe("approved");
     expect(approved.actions).toEqual(plan.actions);
     expect(approved.digest).toBe(plan.digest);
-    expect(approved.approval).toEqual({
+    expect(approved.approval).toMatchObject({
       decision: "approved",
       decidedAt: "2026-08-11T12:05:00.000Z",
       decidedBy: { principalId: "principal_approver", kind: "user" },
       planRevision: 1,
       planDigest: plan.digest,
     });
+    expect(approved.approval?.digest).toMatch(/^[a-f0-9]{64}$/);
     expect(Object.isFrozen(approved.approval)).toBe(true);
   });
 

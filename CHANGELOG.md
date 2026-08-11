@@ -17,6 +17,11 @@ The project intends to follow Keep a Changelog and Semantic Versioning after the
   approval/rejection bound to exact revision and digest.
 - Fail-closed canonical JSON validation for cycles, accessors, custom
   prototypes, symbol keys, sparse arrays, and unsafe numeric values.
+- Provider-neutral idempotent apply orchestration with stable operation IDs,
+  fingerprint conflict detection, completed replay, retry-safe failure, and
+  uncertain-result handling.
+- Payload-free append-only audit receipts plus a deliberately non-production
+  in-memory repository and synthetic executor contract tests.
 
 ### Changed
 

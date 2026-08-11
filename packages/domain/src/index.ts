@@ -1,5 +1,6 @@
 export {
   ChangePlanError,
+  computeApprovalDigest,
   computePlanDigest,
   createChangePlan,
   decideChangePlan,
@@ -13,3 +14,12 @@ export {
   deepFreezeJson,
   normalizeJson,
 } from "./canonical-json.js";
+
+export {
+  ApplyProtocolError,
+  assertApprovedPlan,
+  createApplyFingerprint,
+  freezeApprovedPlan,
+  markPlanApplied,
+  validateApplyCommand,
+} from "./apply.js";

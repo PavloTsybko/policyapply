@@ -40,6 +40,11 @@ export interface DecideChangePlanInput {
   readonly expectedDigest: string;
 }
 
+export const computeApprovalDigest = (
+  approval: Omit<PlanApproval, "digest">,
+): string =>
+  createHash("sha256").update(canonicalJson(approval)).digest("hex");
+
 const kinds = new Set(["user", "agent", "service"]);
 
 const isNonEmpty = (value: unknown): value is string =>
@@ -138,7 +143,7 @@ export const computePlanDigest = (plan: {
 }): string =>
   createHash("sha256").update(canonicalJson(contentFor(plan))).digest("hex");
 
-const freezePlan = (plan: ChangePlan): ChangePlan => {
+export const freezeChangePlan = (plan: ChangePlan): ChangePlan => {
   if (plan.approval !== undefined) {
     Object.freeze(plan.approval.decidedBy);
     Object.freeze(plan.approval);
@@ -176,7 +181,7 @@ export const createChangePlan = (input: CreateChangePlanInput): ChangePlan => {
     actions,
   });
 
-  return freezePlan({
+  return freezeChangePlan({
     id,
     tenantId: input.tenantId,
     projectId: input.projectId,
@@ -251,15 +256,19 @@ export const decideChangePlan = (
     throw new ChangePlanError("invalid_input");
   }
 
-  const approval: PlanApproval = Object.freeze({
+  const approvalContent: Omit<PlanApproval, "digest"> = {
     decision: input.decision,
     decidedAt,
     decidedBy,
     planRevision: plan.revision,
     planDigest: plan.digest,
+  };
+  const approval: PlanApproval = Object.freeze({
+    ...approvalContent,
+    digest: computeApprovalDigest(approvalContent),
   });
 
-  return freezePlan({
+  return freezeChangePlan({
     ...plan,
     status: input.decision,
     approval,

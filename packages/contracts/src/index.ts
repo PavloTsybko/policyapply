@@ -80,6 +80,7 @@ export interface PlanApproval {
   readonly decidedBy: ActorRef;
   readonly planRevision: number;
   readonly planDigest: string;
+  readonly digest: string;
 }
 
 export interface ChangePlan {
@@ -88,7 +89,7 @@ export interface ChangePlan {
   readonly projectId: ProjectId;
   readonly revision: number;
   readonly digest: string;
-  readonly status: "draft" | PlanDecision;
+  readonly status: "draft" | PlanDecision | "applied";
   readonly createdAt: string;
   readonly createdBy: ActorRef;
   readonly actions: readonly PlanAction[];
@@ -102,3 +103,99 @@ export type ChangePlanErrorCode =
   | "digest_mismatch"
   | "content_tampered"
   | "self_approval";
+
+export type ApplyMode = "execute-v1";
+
+export interface ApplyCommand {
+  readonly tenantId: TenantId;
+  readonly projectId: ProjectId;
+  readonly planId: string;
+  readonly planRevision: number;
+  readonly planDigest: string;
+  readonly appliedBy: ActorRef;
+  readonly idempotencyKey: string;
+  readonly correlationId: string;
+  readonly requestedAt: string;
+  readonly mode: ApplyMode;
+}
+
+export type ApplyOutcome =
+  | {
+      readonly outcome: "completed";
+      readonly code: string;
+      readonly completedAt: string;
+    }
+  | {
+      readonly outcome: "failed";
+      readonly code: string;
+      readonly failedAt: string;
+      readonly retrySafe: boolean;
+    }
+  | {
+      readonly outcome: "uncertain";
+      readonly code: string;
+      readonly observedAt: string;
+    };
+
+export type ApplyAttemptStatus =
+  | "claimed"
+  | "executing"
+  | "completed"
+  | "failed"
+  | "uncertain";
+
+export interface ApplyAttempt {
+  readonly operationId: string;
+  readonly fingerprint: string;
+  readonly status: ApplyAttemptStatus;
+  readonly tenantId: TenantId;
+  readonly projectId: ProjectId;
+  readonly planId: string;
+  readonly planRevision: number;
+  readonly planDigest: string;
+  readonly appliedBy: ActorRef;
+  readonly mode: ApplyMode;
+  readonly claimedAt: string;
+  readonly outcome?: ApplyOutcome;
+}
+
+export interface AuditReceipt {
+  readonly id: string;
+  readonly eventType: "plan.apply.completed";
+  readonly tenantId: TenantId;
+  readonly projectId: ProjectId;
+  readonly planId: string;
+  readonly planRevision: number;
+  readonly planDigest: string;
+  readonly operationId: string;
+  readonly actor: ActorRef;
+  readonly occurredAt: string;
+  readonly correlationId: string;
+  readonly resultCode: string;
+}
+
+export interface ApplyReceipt {
+  readonly plan: {
+    readonly id: string;
+    readonly tenantId: TenantId;
+    readonly projectId: ProjectId;
+    readonly revision: number;
+    readonly digest: string;
+    readonly status: "applied";
+  };
+  readonly audit: AuditReceipt;
+  readonly replayed: boolean;
+}
+
+export type ApplyErrorCode =
+  | "invalid_input"
+  | "invalid_state"
+  | "plan_conflict"
+  | "digest_mismatch"
+  | "content_tampered"
+  | "idempotency_conflict"
+  | "apply_in_progress"
+  | "apply_failed"
+  | "apply_uncertain"
+  | "executor_failure"
+  | "audit_conflict";

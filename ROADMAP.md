@@ -17,7 +17,9 @@ This roadmap describes outcomes, not date promises.
   implemented with negative cross-tenant tests);
 - immutable plans and separate approval (implemented on a stacked review branch
   with revision/digest binding and self-approval denial);
-- idempotent apply and append-only audit;
+- idempotent apply and append-only audit (pure protocol, contract tests, and a
+  non-production in-memory reference adapter implemented on a stacked review
+  branch; durable PostgreSQL transaction/RLS support remains);
 - minimal PostgreSQL schema with forced RLS;
 - Fastify/OpenAPI reference API;
 - disposable Docker quickstart with synthetic data.
