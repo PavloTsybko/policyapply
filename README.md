@@ -7,10 +7,11 @@
 PolicyApply is in **pre-release development**. The first admitted source slice
 defines provider-neutral identity contracts and deny-by-default project
 authorization. A second review slice adds immutable draft plans and independent
-approval/rejection bound to an exact revision and digest. Apply is not
-connected to any real provider, persistence layer, or public API. A third
-review slice defines the provider-neutral idempotent apply protocol and
-payload-free append-only audit receipts using test-only in-memory ports.
+approval/rejection bound to an exact revision and digest. A third review slice
+defines the provider-neutral idempotent apply protocol and payload-free
+append-only audit receipts. A fourth review slice adds minimal PostgreSQL
+reference persistence with forced RLS and disposable integration tests. Apply
+is not connected to any real provider or public API.
 
 There are currently:
 
@@ -83,9 +84,11 @@ Implemented baseline:
 - idempotent apply orchestration contracts with safe replay and uncertain-result
   handling;
 - payload-free append-only audit receipts and a test-only in-memory repository.
+- tenant-bound PostgreSQL reference persistence with forced RLS, atomic apply
+  finalization, hashed idempotency keys, and disposable integration tests.
 
-Planned later in M1: Fastify/OpenAPI, PostgreSQL 18 with forced RLS, and a
-disposable Docker Compose environment.
+Planned later in M1: Fastify/OpenAPI and a disposable Docker Compose
+quickstart.
 
 Requirements: Node.js 22+ and pnpm 11.16.0.
 

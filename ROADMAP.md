@@ -19,8 +19,11 @@ This roadmap describes outcomes, not date promises.
   with revision/digest binding and self-approval denial);
 - idempotent apply and append-only audit (pure protocol, contract tests, and a
   non-production in-memory reference adapter implemented on a stacked review
-  branch; durable PostgreSQL transaction/RLS support remains);
-- minimal PostgreSQL schema with forced RLS;
+  branch);
+- minimal PostgreSQL schema with forced RLS (reference repository, atomic
+  apply/audit finalization, migration notes, and disposable integration tests
+  implemented on a stacked review branch; production role provisioning,
+  operations, and deployment remain out of scope);
 - Fastify/OpenAPI reference API;
 - disposable Docker quickstart with synthetic data.
 

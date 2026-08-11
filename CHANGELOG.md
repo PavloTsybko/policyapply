@@ -22,6 +22,11 @@ The project intends to follow Keep a Changelog and Semantic Versioning after the
   uncertain-result handling.
 - Payload-free append-only audit receipts plus a deliberately non-production
   in-memory repository and synthetic executor contract tests.
+- Minimal PostgreSQL reference persistence for approved plans, idempotent apply
+  attempts, atomic completion receipts, and append-only audit records.
+- Forced Row-Level Security and negative cross-tenant integration coverage in a
+  database whose name must end in `_test`.
+- Migration and destructive-rollback guidance without production automation.
 
 ### Changed
 
