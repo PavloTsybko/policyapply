@@ -34,9 +34,9 @@ services:
       PGPORT: "5432"
       PGDATABASE: policyapply_quickstart
       PGUSER: policyapply_runtime
-      PGPASSWORD_FILE: /run/secrets/runtime_db_password
-      POLICYAPPLY_CREATOR_TOKEN_FILE: /run/secrets/creator_token
-      POLICYAPPLY_APPROVER_TOKEN_FILE: /run/secrets/approver_token
+      PGPASSWORD_FILE: /run/policyapply/runtime_db_password
+      POLICYAPPLY_CREATOR_TOKEN_FILE: /run/policyapply/creator_token
+      POLICYAPPLY_APPROVER_TOKEN_FILE: /run/policyapply/approver_token
       POLICYAPPLY_TENANT_ID: tenant_quickstart
       POLICYAPPLY_PROJECT_ID: project_quickstart
     secrets:
@@ -51,8 +51,12 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+      - /run/policyapply:mode=0700
     cap_drop:
       - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
     security_opt:
       - no-new-privileges:true
     init: true
